@@ -289,19 +289,26 @@ function isnum(str) {
 ## usage: isprime(number)
 ## returns 1 if "number" is a prime number, otherwise 0. "number" must be a
 ## positive integer
-function isprime(num,    i) {
+function isprime(num,    i, s) {
   # check to make sure "num" is a valid positive int (and not 1)
   if (num !~ /^[0-9]+$/ || num <= 1) {
     return 0;
   }
 
-  # all even numbers except 2 are not prime
-  if (num > 2 && (num % 2) == 0) {
+  # 1, 2, and 3 are prime
+  if (num <= 3) {
+    return 1;
+  }
+  
+  # check if even or divisible by 3
+  if (!(num % 2) || !(num % 3)) {
     return 0;
   }
-
-  # check for primality
-  for (i=3; i*i <= num; i+=2) {
+  
+  # use naive method, fermats little theorem had overflow and did not work
+  # for primes larger than 1021
+  s = sqrt(num);
+  for (i=5; i<=s; i+=2) {
     if (!(num % i)) {
       return 0;
     }
@@ -313,14 +320,16 @@ function isprime(num,    i) {
 ## usage: gcd(a, b)
 ## returns the greatest common denominator (greatest common factor) of a and b.
 ## both a and b must be positive integers. uses the recursive euclid algorithm.
-function gcd(a, b) {
+function gcd(a, b,    f) {
   # check to make sure both numbers are positive ints
-  if (a !~ /^[0-9]+$/ || !a || b !~ /^[0-9]+$/ || !b) {
-    return 0;
+  if (!f) {
+    if (a !~ /^[0-9]+$/ || !a || b !~ /^[0-9]+$/ || !b) {
+      return 0;
+    }
   }
 
   if (b) {
-    return gcd(b, a % b);
+    return gcd(b, a % b, 1);
 
   } else {
     # return the absolute value
